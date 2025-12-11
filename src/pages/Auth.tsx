@@ -3,7 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,7 +20,7 @@ import { z } from "zod";
 const authSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  fullName: z.string().min(2, "Name must be at least 2 characters").optional()
+  fullName: z.string().min(2, "Name must be at least 2 characters").optional(),
 });
 
 export default function Auth() {
@@ -26,24 +32,32 @@ export default function Auth() {
     email: "",
     password: "",
     fullName: "",
-    role: "citizen" as "admin" | "citizen"
+    role: "citizen" as "admin" | "citizen",
   });
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       authSchema.pick({ email: true, password: true }).parse(formData);
       const { error } = await signIn(formData.email, formData.password);
       if (error) {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
       } else {
         navigate("/user-welcome");
       }
     } catch (err) {
       if (err instanceof z.ZodError) {
-        toast({ title: "Validation Error", description: err.errors[0].message, variant: "destructive" });
+        toast({
+          title: "Validation Error",
+          description: err.errors[0].message,
+          variant: "destructive",
+        });
       }
     } finally {
       setLoading(false);
@@ -53,23 +67,44 @@ export default function Auth() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       authSchema.parse({ ...formData, fullName: formData.fullName });
-      const { error } = await signUp(formData.email, formData.password, formData.fullName, formData.role);
+      const { error } = await signUp(
+        formData.email,
+        formData.password,
+        formData.fullName,
+        formData.role
+      );
       if (error) {
         if (error.message.includes("already registered")) {
-          toast({ title: "Account Exists", description: "This email is already registered. Please sign in instead.", variant: "destructive" });
+          toast({
+            title: "Account Exists",
+            description:
+              "This email is already registered. Please sign in instead.",
+            variant: "destructive",
+          });
         } else {
-          toast({ title: "Error", description: error.message, variant: "destructive" });
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive",
+          });
         }
       } else {
-        toast({ title: "Success!", description: "Account created successfully!" });
+        toast({
+          title: "Success!",
+          description: "Account created successfully!",
+        });
         navigate("/user-welcome");
       }
     } catch (err) {
       if (err instanceof z.ZodError) {
-        toast({ title: "Validation Error", description: err.errors[0].message, variant: "destructive" });
+        toast({
+          title: "Validation Error",
+          description: err.errors[0].message,
+          variant: "destructive",
+        });
       }
     } finally {
       setLoading(false);
@@ -81,7 +116,10 @@ export default function Auth() {
       {/* Animated background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute w-72 h-72 bg-mint/10 rounded-full -top-36 -right-36 animate-float" />
-        <div className="absolute w-64 h-64 bg-gold/10 rounded-full -bottom-32 -left-32 animate-float" style={{ animationDelay: "1s" }} />
+        <div
+          className="absolute w-64 h-64 bg-gold/10 rounded-full -bottom-32 -left-32 animate-float"
+          style={{ animationDelay: "1s" }}
+        />
       </div>
 
       <Card className="w-full max-w-md relative z-10 animate-scale-in bg-card/95 backdrop-blur-sm border-primary/20">
@@ -89,8 +127,12 @@ export default function Auth() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-mint/20 rounded-full mx-auto mb-4">
             <AlertTriangle className="w-8 h-8 text-mint" />
           </div>
-          <CardTitle className="text-2xl font-serif">Community Issue Reporter</CardTitle>
-          <CardDescription>Report and track issues in your community</CardDescription>
+          <CardTitle className="text-2xl font-serif">
+            Community Issue Reporter
+          </CardTitle>
+          <CardDescription>
+            Report and track issues in your community
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
@@ -98,7 +140,7 @@ export default function Auth() {
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4 mt-4">
                 <div className="space-y-2">
@@ -108,7 +150,9 @@ export default function Auth() {
                     type="email"
                     placeholder="your@email.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -117,19 +161,28 @@ export default function Auth() {
                   <Input
                     id="signin-password"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder="*******"
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" variant="mint" disabled={loading}>
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                <Button
+                  type="submit"
+                  className="w-full"
+                  variant="mint"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  ) : null}
                   Sign In
                 </Button>
               </form>
             </TabsContent>
-            
+
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4 mt-4">
                 <div className="space-y-2">
@@ -139,7 +192,9 @@ export default function Auth() {
                     type="text"
                     placeholder="John Doe"
                     value={formData.fullName}
-                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, fullName: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -150,7 +205,9 @@ export default function Auth() {
                     type="email"
                     placeholder="your@email.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -159,9 +216,11 @@ export default function Auth() {
                   <Input
                     id="signup-password"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder="******"
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -169,27 +228,54 @@ export default function Auth() {
                   <Label>Select Your Role</Label>
                   <RadioGroup
                     value={formData.role}
-                    onValueChange={(value) => setFormData({ ...formData, role: value as "admin" | "citizen" })}
+                    onValueChange={(value) =>
+                      setFormData({
+                        ...formData,
+                        role: value as "admin" | "citizen",
+                      })
+                    }
                     className="grid grid-cols-2 gap-4"
                   >
-                    <div className={`flex items-center space-x-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${formData.role === "citizen" ? "border-mint bg-mint/10" : "border-border hover:border-mint/50"}`}>
+                    <div
+                      className={`flex items-center space-x-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        formData.role === "citizen"
+                          ? "border-mint bg-mint/10"
+                          : "border-border hover:border-mint/50"
+                      }`}
+                    >
                       <RadioGroupItem value="citizen" id="citizen" />
-                      <Label htmlFor="citizen" className="cursor-pointer flex items-center gap-2">
+                      <Label
+                        htmlFor="citizen"
+                        className="cursor-pointer flex items-center gap-2"
+                      >
                         <User className="w-4 h-4" />
                         Citizen
                       </Label>
                     </div>
-                    <div className={`flex items-center space-x-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${formData.role === "admin" ? "border-gold bg-gold/10" : "border-border hover:border-gold/50"}`}>
-                      <RadioGroupItem value="admin" id="admin" />
-                      <Label htmlFor="admin" className="cursor-pointer flex items-center gap-2">
-                        <Shield className="w-4 h-4" />
-                        Admin
+                    <div
+                      className={`flex items-center space-x-2 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        formData.role === "admin"
+                          ? "border-gold bg-gold/10"
+                          : "border-border hover:border-gold/50"
+                      }`}
+                    >
+                      {/* <RadioGroupItem value="admin" id="admin" /> */}
+                      <Label htmlFor="admin" className=" ">
+                        {/* <Shield className="w-4 h-4" /> */}
+                        admin already registered
                       </Label>
                     </div>
                   </RadioGroup>
                 </div>
-                <Button type="submit" className="w-full" variant="mint" disabled={loading}>
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                <Button
+                  type="submit"
+                  className="w-full"
+                  variant="mint"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  ) : null}
                   Create Account
                 </Button>
               </form>

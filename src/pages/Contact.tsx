@@ -3,35 +3,76 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Navbar } from "@/components/layout/Navbar";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Github, Twitter, Send, Loader2, Clock, User } from "lucide-react";
+import {
+  Mail,
+  Github,
+  Twitter,
+  Send,
+  Loader2,
+  Clock,
+  User,
+} from "lucide-react";
 
 export default function Contact() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    // Simulate sending (in real app, would call an edge function)
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({ 
-      title: "Message Sent!", 
-      description: "Thank you for reaching out. We'll respond within 24-48 hours." 
+
+    // ✅ Send data to Formspree
+    await fetch("https://formspree.io/f/mvgevqal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    // Existing behavior (kept exactly the same)
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    toast({
+      title: "Message Sent!",
+      description:
+        "Thank you for reaching out. We'll respond within 24-48 hours.",
     });
     setFormData({ name: "", email: "", message: "" });
     setLoading(false);
   };
 
   const socialLinks = [
-    { icon: Mail, label: "Email", value: "oliidan657@gmail.com", href: "mailto:oliidan657@gmail.com" },
-    { icon: Github, label: "GitHub", value: "@oliidan657", href: "https://github.com/oliidan657" },
-    { icon: Twitter, label: "Twitter", value: "@oliidan657", href: "https://twitter.com/oliidan657" }
+    {
+      icon: Mail,
+      label: "Email",
+      value: "oliidan657@gmail.com",
+      href: "mailto:oliidan657@gmail.com",
+    },
+    {
+      icon: Github,
+      label: "GitHub",
+      value: "Oliyad-oli",
+      href: "https://github.com/oliyad-oli",
+    },
+    {
+      icon: Twitter,
+      label: "Twitter",
+      value: "@olidan657",
+      href: "https://twitter.com/@olidan657",
+    },
   ];
 
   return (
@@ -58,8 +99,12 @@ export default function Contact() {
               <div className="w-14 h-14 bg-mint/20 rounded-xl flex items-center justify-center mb-4">
                 <Mail className="w-7 h-7 text-mint" />
               </div>
-              <CardTitle className="text-2xl font-serif">Send a Message</CardTitle>
-              <CardDescription>Fill out the form and we'll get back to you</CardDescription>
+              <CardTitle className="text-2xl font-serif">
+                Send a Message
+              </CardTitle>
+              <CardDescription>
+                Fill out the form and we'll get back to you
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -67,36 +112,58 @@ export default function Contact() {
                   <Label htmlFor="name">Your Name</Label>
                   <Input
                     id="name"
+                    name="name" // Added for Formspree
                     placeholder="John Doe"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     required
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Your Email</Label>
                   <Input
                     id="email"
+                    name="email" // Added for Formspree
                     type="email"
                     placeholder="john@example.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     required
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="message">Message</Label>
                   <Textarea
                     id="message"
+                    name="message" // Added for Formspree
                     placeholder="How can we help you?"
                     rows={5}
                     value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, message: e.target.value })
+                    }
                     required
                   />
                 </div>
-                <Button type="submit" variant="mint" size="lg" className="w-full" disabled={loading}>
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
+
+                <Button
+                  type="submit"
+                  variant="mint"
+                  size="lg"
+                  className="w-full"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  ) : (
+                    <Send className="w-4 h-4 mr-2" />
+                  )}
                   Send Message
                 </Button>
               </form>
@@ -106,12 +173,17 @@ export default function Contact() {
           {/* Contact Info */}
           <div className="space-y-6">
             {/* Developer Info */}
-            <Card className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
+            <Card
+              className="animate-slide-up"
+              style={{ animationDelay: "0.1s" }}
+            >
               <CardHeader>
                 <div className="w-14 h-14 bg-gold/20 rounded-xl flex items-center justify-center mb-4">
                   <User className="w-7 h-7 text-gold" />
                 </div>
-                <CardTitle className="text-xl font-serif">Developer Contact</CardTitle>
+                <CardTitle className="text-xl font-serif">
+                  Developer Contact
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {socialLinks.map((link) => (
@@ -127,7 +199,9 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="font-medium">{link.label}</p>
-                      <p className="text-sm text-muted-foreground">{link.value}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {link.value}
+                      </p>
                     </div>
                   </a>
                 ))}
@@ -135,7 +209,10 @@ export default function Contact() {
             </Card>
 
             {/* Response Time */}
-            <Card className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
+            <Card
+              className="animate-slide-up"
+              style={{ animationDelay: "0.2s" }}
+            >
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-coral/20 rounded-lg flex items-center justify-center">
